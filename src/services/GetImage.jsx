@@ -4,3 +4,5 @@ export const getImage = (searchImage) => {
 
     return fetch(`${BASE_URL}?q=${searchImage}&page=1&key=${KEY_API}&image_type=photo&orientation=horizontal&per_page=12`)
 }
+
+

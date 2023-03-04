@@ -11,13 +11,14 @@ export class Searchbar extends Component {
 
     handleSubmit = evt => {
         evt.preventDefault();
+        const { imageName } = this.state;
 
-        if (this.state.imageName.trim() === '') {
+        if (imageName.trim() === '') {
             alert('Fill out the form, please.')
             return;
         };
         
-        this.props.onSubmit(this.state.imageName);
+        this.props.onSubmit(imageName);
         this.setState({ imageName: ''})
     };
 

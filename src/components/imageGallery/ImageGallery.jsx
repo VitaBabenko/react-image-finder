@@ -6,7 +6,8 @@ import { Loader } from '../loader/Loader';
 export class ImageGallery extends Component {
     state = {
         images: null,
-        loading: false
+        loading: false,
+        error: null
     }
 
     componentDidUpdate(prevProps) {
@@ -14,25 +15,45 @@ export class ImageGallery extends Component {
         const nextName = this.props.value;
 
         if (prevName !== nextName) {
-            this.setState({loading: true})
-            getImage(nextName)
-                .then(resp => resp.json())
-                .then(images => {
+            this.setState({
+                loading: true,
+                images: null
+            });
+
+            setTimeout(() => {
+                getImage(nextName)
+                    .then(resp => {
+                        if (resp.ok && resp.totalHits !== 0) {
+                            return resp.json()
+                        }
+
+                        return Promise.reject(new Error('There are no images!'))
+                    })
+                    .then(images => {
                     console.log(images)
                     this.setState({images})
-                }).finally(() => {
+                })
+                    .catch(error => {
+                        console.log(error);
+                        this.setState({error})
+                    })
+                    .finally(() => {
                     this.setState({loading: false})
                 })
+            }, 1000);
         }
     }
 
     render() {
+        const { images, loading, error } = this.state;
+
         return (
             <>
-                {this.state.loading && <p>
+                {error && <h1>{error.message}</h1> }
+                {loading && <p>
                     <Loader />
                 </p>}
-                {this.state.images && this.state.images.hits.map(image => {
+                {images && images.hits.map(image => {
                     return <li key={image.id}>
                         <ImageGalleryItem image={image} />
                     </li>

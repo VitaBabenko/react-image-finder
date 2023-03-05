@@ -14,7 +14,7 @@ export class Searchbar extends Component {
         const { imageName } = this.state;
 
         if (imageName.trim() === '') {
-            alert('Fill out the form, please.')
+            alert("Fill out the form, please!")
             return;
         };
         

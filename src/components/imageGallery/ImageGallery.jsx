@@ -2,63 +2,69 @@ import { Component } from 'react';
 import { getImage } from '../../services/GetImage';
 import { ImageGalleryItem } from '../imageGalleryItem/ImageGalleryItem';
 import { Loader } from '../loader/Loader';
+import { Button } from '../button/Button';
 
 export class ImageGallery extends Component {
     state = {
         images: null,
         loading: false,
-        error: null
+        error: null,
+        page: 1
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         const prevName = prevProps.value;
         const nextName = this.props.value;
 
-        if (prevName !== nextName) {
-            this.setState({
-                loading: true,
-                images: null
-            });
+        if (prevName !== nextName ||
+            prevState.page !== this.state.page) {
+            this.setState({ loading: true, images: null })
+           
+            getImage(nextName.trim(), this.state.page)
+                .then(resp => {
+                    if (resp.ok) {
+                        return resp.json()
+                    }
 
-            setTimeout(() => {
-                getImage(nextName)
-                    .then(resp => {
-                        if (resp.ok && resp.totalHits !== 0) {
-                            return resp.json()
-                        }
-
-                        return Promise.reject(new Error('There are no images!'))
-                    })
-                    .then(images => {
-                    console.log(images)
-                    this.setState({images})
+                    return Promise.reject(new Error('Sorry, there are no images matching your search query. Please try again.'))
                 })
-                    .catch(error => {
-                        console.log(error);
-                        this.setState({error})
-                    })
-                    .finally(() => {
-                    this.setState({loading: false})
+                .then(images => {
+                    if (images.totalHits === 0) {
+                        return Promise.reject(new Error('Sorry, there are no images matching your search query. Please try again.')) 
+                    }
+                  
+                    return this.setState({ images: { hits: [...images.hits] } })
                 })
-            }, 1000);
+                .catch(error => this.setState({ error }))
+                .finally(() => this.setState({loading: false}))
         }
+    };
+
+    handleButton = () => {
+        this.setState((prev) => ({ page: prev.page + 1 }))
     }
 
     render() {
         const { images, loading, error } = this.state;
 
-        return (
-            <>
-                {error && <h1>{error.message}</h1> }
-                {loading && <p>
-                    <Loader />
-                </p>}
-                {images && images.hits.map(image => {
-                    return <li key={image.id}>
-                        <ImageGalleryItem image={image} />
-                    </li>
-                })}
-            </>
-        )
+        return <>
+            {error && <h1>{error.message}</h1>}
+            {loading && <Loader />}
+            {images && <>
+                <ul>{images.hits.map(image => {
+                return <li key={image.id}>
+                    <ImageGalleryItem image={image} />
+                </li>
+            })}
+            </ul>
+                <Button onClick={this.handleButton} />
+                </>
+            }
+        </>      
     }
 }
+
+
+
+
+ 

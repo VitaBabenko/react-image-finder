@@ -3,6 +3,7 @@ import { getImage } from '../../services/GetImage';
 import { ImageGalleryItem } from '../imageGalleryItem/ImageGalleryItem';
 import { Loader } from '../loader/Loader';
 import { Button } from '../button/Button';
+import { List, ListItem } from './ImageGallery.styled';
 
 export class ImageGallery extends Component {
     state = {
@@ -29,6 +30,7 @@ export class ImageGallery extends Component {
                     return Promise.reject(new Error('Sorry, there are no images matching your search query. Please try again.'))
                 })
                 .then(images => {
+                    console.log(images)
                     if (images.totalHits === 0) {
                         return Promise.reject(new Error('Sorry, there are no images matching your search query. Please try again.')) 
                     }
@@ -51,12 +53,12 @@ export class ImageGallery extends Component {
             {error && <h1>{error.message}</h1>}
             {loading && <Loader />}
             {images && <>
-                <ul>{images.hits.map(image => {
-                return <li key={image.id}>
+                <List>{images.hits.map(image => {
+                return <ListItem key={image.id}>
                     <ImageGalleryItem image={image} />
-                </li>
+                </ListItem>
             })}
-            </ul>
+            </List>
                 <Button onClick={this.handleButton} />
                 </>
             }

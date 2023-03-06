@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import { AiOutlineSearch } from "react-icons/ai";
+import { Header, Form, Btn, Input } from './Searchbar.styled';
 
 export class Searchbar extends Component {
     state = {
@@ -24,13 +26,13 @@ export class Searchbar extends Component {
 
     render() {
         return (
-            <header>
-                <form onSubmit={this.handleSubmit}>
-                    <button type="submit">
-                        <span>Search</span>
-                    </button>
+            <Header>
+                <Form onSubmit={this.handleSubmit}>
+                    <Btn type="submit">
+                        <AiOutlineSearch />
+                    </Btn>
                     
-                    <input
+                    <Input
                         type="text"
                         name="imageName"
                         value={this.state.imageName}
@@ -39,8 +41,8 @@ export class Searchbar extends Component {
                         placeholder="Search images and photos"
                         onChange={this.handleNameChange}
                     />
-                </form>
-            </header>
+                </Form>
+            </Header>
         )
     }
 }

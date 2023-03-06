@@ -20,38 +20,36 @@ export class ImageGallery extends Component {
     if (prevName !== nextName || prevProps.page !== this.props.page) {
       this.setState({ loading: true, images: [], totalHits: null });
 
-      setTimeout(() => {
-        getImage(nextName.trim(), this.props.page)
-          .then(resp => {
-            if (resp.ok) {
-              return resp.json();
-            }
+      getImage(nextName.trim(), this.props.page)
+        .then(resp => {
+          if (resp.ok) {
+            return resp.json();
+          }
 
+          return Promise.reject(
+            new Error(
+              'Sorry, there are no images matching your search query. Please try again.'
+            )
+          );
+        })
+        .then(images => {
+          if (images.totalHits === 0) {
             return Promise.reject(
               new Error(
                 'Sorry, there are no images matching your search query. Please try again.'
               )
             );
-          })
-          .then(images => {
-            if (images.totalHits === 0) {
-              return Promise.reject(
-                new Error(
-                  'Sorry, there are no images matching your search query. Please try again.'
-                )
-              );
-            }
-            return this.setState(prevState => ({
-              images:
-                this.props.page === 1
-                  ? images.hits
-                  : [...prevState.images, ...images.hits],
-              totalHits: images.totalHits,
-            }));
-          })
-          .catch(error => this.setState({ error }))
-          .finally(() => this.setState({ loading: false }));
-      }, 3000);
+          }
+          return this.setState(prevState => ({
+            images:
+              this.props.page === 1
+                ? images.hits
+                : [...prevState.images, ...images.hits],
+            totalHits: images.totalHits,
+          }));
+        })
+        .catch(error => this.setState({ error }))
+        .finally(() => this.setState({ loading: false }));
     }
   }
 
@@ -67,7 +65,10 @@ export class ImageGallery extends Component {
             {images.map(image => {
               return (
                 <ListItem key={image.id}>
-                  <ImageGalleryItem image={image} />
+                  <ImageGalleryItem
+                    image={image}
+                    onSelect={this.props.onSelect}
+                  />
                 </ListItem>
               );
             })}

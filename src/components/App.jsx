@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { Searchbar } from './searchbar/Searchbar';
-import { ImageGallery } from './imageGallery/ImageGallery';
 import { Modal } from './modal/Modal';
+import { ImageGallery } from './imageGallery/ImageGallery';
 
 export class App extends Component {
   state = {
@@ -18,17 +18,17 @@ export class App extends Component {
     this.setState(prev => ({ page: prev.page + 1 }));
   };
 
-  selectImage = imageURL => {
-    console.log(imageURL);
-    this.setState({ selectedImage: imageURL });
+  selectImage = imageUrl => {
+    console.log(imageUrl);
+    this.setState({ selectedImage: imageUrl });
   };
 
   render() {
-    const { imageName, page, selectedImage } = this.state;
+    const { imageName, page } = this.state;
 
     return (
       <>
-        {selectedImage && <Modal image={selectedImage} />}
+        {this.state.selectedImage && <Modal image={this.state.selectedImage} />}
         <Searchbar onSubmit={this.handleFormSubmit} />
         <ImageGallery
           value={imageName}

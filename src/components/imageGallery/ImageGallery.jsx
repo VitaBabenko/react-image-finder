@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import { getImage } from '../../services/GetImage';
 import { ImageGalleryItem } from '../imageGalleryItem/ImageGalleryItem';
 import { Loader } from '../loader/Loader';
@@ -14,13 +15,14 @@ export class ImageGallery extends Component {
   };
 
   componentDidUpdate(prevProps) {
+    const { value, page } = this.props;
     const prevName = prevProps.value;
-    const nextName = this.props.value;
+    const nextName = value;
 
-    if (prevName !== nextName || prevProps.page !== this.props.page) {
+    if (prevName !== nextName || prevProps.page !== page) {
       this.setState({ loading: true, images: [], totalHits: null });
 
-      getImage(nextName.trim(), this.props.page)
+      getImage(nextName.trim(), page)
         .then(resp => {
           if (resp.ok) {
             return resp.json();
@@ -33,6 +35,7 @@ export class ImageGallery extends Component {
           );
         })
         .then(images => {
+          console.log(images);
           if (images.totalHits === 0) {
             return Promise.reject(
               new Error(
@@ -42,9 +45,7 @@ export class ImageGallery extends Component {
           }
           return this.setState(prevState => ({
             images:
-              this.props.page === 1
-                ? images.hits
-                : [...prevState.images, ...images.hits],
+              page === 1 ? images.hits : [...prevState.images, ...images.hits],
             totalHits: images.totalHits,
           }));
         })
@@ -81,3 +82,8 @@ export class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.propTypes = {
+  value: PropTypes.string.isRequired,
+  page: PropTypes.number.isRequired,
+};

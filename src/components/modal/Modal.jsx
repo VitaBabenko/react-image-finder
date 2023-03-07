@@ -1,10 +1,10 @@
 import { DivOverlay, DivModal } from './Modal.styled';
 
-export const Modal = ({ image: { largeImageURL, tags } }) => {
+export const Modal = ({ image: { webformatURL, tags } }) => {
   return (
     <DivOverlay>
       <DivModal>
-        <img src={largeImageURL} alt={tags} />
+        <img src={webformatURL} alt={tags} />
       </DivModal>
     </DivOverlay>
   );

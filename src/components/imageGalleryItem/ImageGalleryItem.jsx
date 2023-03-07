@@ -8,24 +8,12 @@ export class ImageGalleryItem extends Component {
     isOpen: false,
   };
 
-  componentDidMount() {
-    console.log('componentDidMount');
-
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
-
-  componentWillUnmount() {
-    console.log('componentWillUnmount');
-    window.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  openModal = () => {
-    this.setState({ isOpen: true });
+  toggleModal = () => {
+    this.setState(({ isOpen }) => ({ isOpen: !isOpen }));
   };
 
   handleKeyDown = evt => {
     if (evt.code === 'Escape') {
-      console.log('close');
       this.setState({ isOpen: false });
     }
   };
@@ -37,8 +25,15 @@ export class ImageGalleryItem extends Component {
 
     return (
       <>
-        <Img src={webformatURL} alt={tags} onClick={this.openModal} />
-        {this.state.isOpen && <Modal image={largeImageURL} name={tags} />}
+        <Img src={webformatURL} alt={tags} onClick={this.toggleModal} />
+        {this.state.isOpen && (
+          <Modal
+            largeImage={largeImageURL}
+            name={tags}
+            handleKeyDown={this.handleKeyDown}
+            onClose={this.toggleModal}
+          />
+        )}
       </>
     );
   }
@@ -46,6 +41,7 @@ export class ImageGalleryItem extends Component {
 
 ImageGalleryItem.propTypes = {
   image: PropTypes.shape({
+    largeImageURL: PropTypes.string.isRequired,
     webformatURL: PropTypes.string.isRequired,
     tags: PropTypes.string.isRequired,
   }).isRequired,

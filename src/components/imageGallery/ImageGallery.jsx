@@ -35,14 +35,6 @@ export class ImageGallery extends Component {
           );
         })
         .then(images => {
-          console.log(images);
-          if (images.totalHits === 0) {
-            return Promise.reject(
-              new Error(
-                'Sorry, there are no images matching your search query. Please try again.'
-              )
-            );
-          }
           return this.setState(prevState => ({
             images:
               page === 1 ? images.hits : [...prevState.images, ...images.hits],
@@ -66,16 +58,19 @@ export class ImageGallery extends Component {
             {images.map(image => {
               return (
                 <ListItem key={image.id}>
-                  <ImageGalleryItem
-                    image={image}
-                    onSelect={this.props.onSelect}
-                  />
+                  <ImageGalleryItem image={image} />
                 </ListItem>
               );
             })}
           </List>
           {images.length < totalHits && (
             <Button onClick={this.props.handleLoad} />
+          )}
+          {totalHits === 0 && (
+            <h1>
+              Sorry, there are no images matching your search query. Please try
+              again.
+            </h1>
           )}
         </>
       </>

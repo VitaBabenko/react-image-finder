@@ -20,7 +20,9 @@ export class ImageGallery extends Component {
     const nextName = value;
 
     if (prevName !== nextName || prevProps.page !== page) {
-      this.setState({ loading: true, images: [], totalHits: null });
+      this.setState({
+        loading: true,
+      });
 
       getImage(nextName.trim(), page)
         .then(resp => {
@@ -35,9 +37,10 @@ export class ImageGallery extends Component {
           );
         })
         .then(images => {
-          return this.setState(prevState => ({
+          console.log(images.hits);
+          return this.setState(() => ({
             images:
-              page === 1 ? images.hits : [...prevState.images, ...images.hits],
+              page === 1 ? images.hits : [...this.state.images, ...images.hits],
             totalHits: images.totalHits,
           }));
         })
